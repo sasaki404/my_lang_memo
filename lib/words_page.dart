@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:my_lang_memo/database/word_table.dart';
 import 'package:my_lang_memo/model/word.dart';
+import 'package:my_lang_memo/provider/word_records.dart';
 import 'package:my_lang_memo/web_view_page.dart';
 
 class WordsPage extends ConsumerStatefulWidget {
@@ -12,7 +13,7 @@ class WordsPage extends ConsumerStatefulWidget {
 }
 
 class WordsPageState extends ConsumerState<WordsPage> {
-  Future<List<Word>>? wordRecords;
+  late Future<List<Word>> wordRecords;
   final wordTable = WordTable();
 
   @override
@@ -25,6 +26,13 @@ class WordsPageState extends ConsumerState<WordsPage> {
 
   @override
   Widget build(BuildContext context) {
+    ref.listen(wordRecordsNotifierProvider, ((previous, next) {
+      next.whenData((value) {
+        setState(() {
+          wordRecords = Future.value(value);
+        });
+      });
+    }));
     return FutureBuilder(
         future: wordRecords,
         builder: (context, snapshot) {

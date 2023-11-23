@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:my_lang_memo/database/word_table.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:my_lang_memo/model/word.dart';
+import 'package:my_lang_memo/provider/word_records.dart';
 
-class WordRegistDialog extends StatefulWidget {
+class WordRegistDialog extends ConsumerStatefulWidget {
   const WordRegistDialog({super.key});
+
   @override
-  State<WordRegistDialog> createState() => _WordRegistDialogState();
+  WordRegistDialogState createState() => WordRegistDialogState();
 }
 
-class _WordRegistDialogState extends State<WordRegistDialog> {
+class WordRegistDialogState extends ConsumerState<WordRegistDialog> {
   final valueController = TextEditingController();
   final meaningController = TextEditingController();
   bool? isFinished = false;
@@ -32,7 +34,7 @@ class _WordRegistDialogState extends State<WordRegistDialog> {
               height: 10,
             ),
             TextFormField(
-              controller: valueController,
+              controller: meaningController,
               decoration: const InputDecoration(
                   labelText: "meaning", border: OutlineInputBorder()),
             ),
@@ -94,12 +96,12 @@ class _WordRegistDialogState extends State<WordRegistDialog> {
                     );
                   });
             } else {
-              await WordTable().insert(Word(
-                value: valueController.text,
-                meaning: meaningController.text,
-                isFinished: isFinished,
-                type: type,
-              ));
+              await ref.watch(wordRecordsNotifierProvider.notifier).insert(Word(
+                    value: valueController.text,
+                    meaning: meaningController.text,
+                    isFinished: isFinished,
+                    type: type,
+                  ));
               if (context.mounted) Navigator.pop(context, true);
             }
           },
