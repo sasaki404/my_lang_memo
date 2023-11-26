@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_tts/flutter_tts.dart';
 import 'package:my_lang_memo/database/word_table.dart';
 import 'package:my_lang_memo/model/word.dart';
 import 'package:my_lang_memo/provider/word_records.dart';
@@ -15,6 +16,8 @@ class WordsPage extends ConsumerStatefulWidget {
 class WordsPageState extends ConsumerState<WordsPage> {
   late Future<List<Word>> wordRecords;
   final wordTable = WordTable();
+  // FlutterTtsのインスタンスを作成
+  final FlutterTts tts = FlutterTts();
 
   @override
   void initState() {
@@ -26,6 +29,7 @@ class WordsPageState extends ConsumerState<WordsPage> {
 
   @override
   Widget build(BuildContext context) {
+    // レコードが登録されたときの状態更新処理
     ref.listen(wordRecordsNotifierProvider, ((previous, next) {
       next.whenData((value) {
         setState(() {
@@ -33,6 +37,10 @@ class WordsPageState extends ConsumerState<WordsPage> {
         });
       });
     }));
+
+    tts.setLanguage('en-US');
+    tts.setSpeechRate(0.5);
+
     return FutureBuilder(
         future: wordRecords,
         builder: (context, snapshot) {
@@ -58,20 +66,38 @@ class WordsPageState extends ConsumerState<WordsPage> {
                                     WebViewPage(keyWord: record.value)));
                       },
                       child: Card(
-                        color: Color.fromARGB(66, 63, 60, 60),
-                        shape: const RoundedRectangleBorder(
-                          // 枠線を変更できる
-                          borderRadius: BorderRadius.only(
-                            topLeft: Radius.circular(60), // Card左上の角に丸み
-                            bottomRight:
-                                Radius.elliptical(40, 20), //Card左上の角の微調整
-                            // (x, y) -> (元の角から左にどれだけ離れているか, 元の角から上にどれだけ離れているか)
-                          ),
+                        color: Colors.white,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
                         ),
                         child: Column(
                           children: [
-                            Text(record.value),
-                            Text(record.meaning ?? ''),
+                            ListTile(
+                              title: Text(
+                                record.value,
+                                style: const TextStyle(
+                                  color: Colors.black,
+                                  fontFamily: 'Murecho',
+                                  fontWeight: FontWeight.w500,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                              subtitle: (record.meaning != null)
+                                  ? Text(
+                                      record.meaning!,
+                                      textAlign: TextAlign.center,
+                                      style: const TextStyle(
+                                          fontWeight: FontWeight.normal,
+                                          color: Colors.black54),
+                                    )
+                                  : const SizedBox(),
+                              trailing: GestureDetector(
+                                onTap: () {
+                                  tts.speak(record.value);
+                                },
+                                child: const Icon(Icons.volume_up),
+                              ),
+                            ),
                           ],
                         ),
                       ),
@@ -80,6 +106,10 @@ class WordsPageState extends ConsumerState<WordsPage> {
                   separatorBuilder: (context, index) =>
                       const SizedBox(height: 10),
                   itemCount: records.length,
+                  padding: const EdgeInsets.only(
+                    top: 10,
+                    bottom: 90,
+                  ),
                 );
         });
   }
