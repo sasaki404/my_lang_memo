@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:my_lang_memo/camera_view.dart';
 import 'package:my_lang_memo/model/word.dart';
 import 'package:my_lang_memo/provider/word_records.dart';
 
@@ -15,22 +16,42 @@ class WordRegistDialogState extends ConsumerState<WordRegistDialog> {
   final meaningController = TextEditingController();
   bool? isFinished = false;
   int? type = 0;
+
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: const Text("Input word or sentence!"),
       content: SingleChildScrollView(
         child: Column(
           children: [
-            SizedBox(
+            const SizedBox(
               height: 10,
             ),
             TextFormField(
               controller: valueController,
-              decoration: const InputDecoration(
-                  labelText: "word or sentence", border: OutlineInputBorder()),
+              decoration: InputDecoration(
+                labelText: "word or sentence",
+                border: const OutlineInputBorder(),
+                suffixIcon: GestureDetector(
+                  onTap: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(builder: (context) {
+                        //遷移先の画面としてリスト追加画面を指定
+                        return const CameraView();
+                      }),
+                    ).then(
+                      (value) {
+                        valueController.text = value;
+                      },
+                    );
+                  },
+                  child: const Icon(
+                    Icons.camera_alt,
+                  ),
+                ),
+              ),
+              maxLines: 3,
             ),
-            SizedBox(
+            const SizedBox(
               height: 10,
             ),
             TextFormField(
@@ -70,7 +91,15 @@ class WordRegistDialogState extends ConsumerState<WordRegistDialog> {
           onPressed: () {
             Navigator.pop(context);
           },
-          child: const Text("Cancel"),
+          style: const ButtonStyle(
+            backgroundColor: MaterialStatePropertyAll(
+              Colors.white,
+            ),
+          ),
+          child: const Text(
+            "Cancel",
+            style: TextStyle(color: Colors.black),
+          ),
         ),
         ElevatedButton(
           onPressed: () async {
@@ -88,10 +117,13 @@ class WordRegistDialogState extends ConsumerState<WordRegistDialog> {
                       content: const Text("Please enter a name."),
                       actions: [
                         ElevatedButton(
-                            onPressed: () {
-                              Navigator.pop(context);
-                            },
-                            child: const Text("OK")),
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                          child: const Text(
+                            "OK",
+                          ),
+                        ),
                       ],
                     );
                   });
@@ -105,7 +137,15 @@ class WordRegistDialogState extends ConsumerState<WordRegistDialog> {
               if (context.mounted) Navigator.pop(context, true);
             }
           },
-          child: const Text("Ok"),
+          style: const ButtonStyle(
+            backgroundColor: MaterialStatePropertyAll(
+              Colors.white,
+            ),
+          ),
+          child: const Text(
+            "Ok",
+            style: TextStyle(color: Colors.black),
+          ),
         ),
       ],
     );
