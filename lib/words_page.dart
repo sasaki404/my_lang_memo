@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:my_lang_memo/database/word_table.dart';
@@ -16,7 +17,6 @@ class WordsPage extends ConsumerStatefulWidget {
 class WordsPageState extends ConsumerState<WordsPage> {
   late Future<List<Word>> wordRecords;
   final wordTable = WordTable();
-  // FlutterTtsのインスタンスを作成
   final FlutterTts tts = FlutterTts();
 
   @override
@@ -58,12 +58,87 @@ class WordsPageState extends ConsumerState<WordsPage> {
                   itemBuilder: (context, index) {
                     final record = records[index];
                     return GestureDetector(
-                      onTap: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) =>
-                                    WebViewPage(keyWord: record.value)));
+                      onTapDown: (details) {
+                        final position = details.globalPosition;
+                        showMenu(
+                          context: context,
+                          position: RelativeRect.fromLTRB(
+                              position.dx, position.dy, 0, 0),
+                          items: [
+                            // クリップボードにコピー
+                            PopupMenuItem(
+                              onTap: () async {
+                                final data = ClipboardData(text: record.value);
+                                await Clipboard.setData(data);
+                              },
+                              child: const Text('Copy to Clipboard'),
+                            ),
+                            // Google翻訳で開く
+                            PopupMenuItem(
+                              onTap: () {
+                                Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                    builder: (context) => WebViewPage(
+                                      url:
+                                          "https://translate.google.co.jp/?hl=ja&sl=en&tl=ja&text=${record.value}&op=translate",
+                                    ),
+                                  ),
+                                );
+                              },
+                              child: const Text('Open with google translate'),
+                            ),
+                            // DeepLで開く
+                            PopupMenuItem(
+                              onTap: () {
+                                Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                    builder: (context) => WebViewPage(
+                                      url:
+                                          "https://www.deepl.com/ja/translator#en/ja/${record.value}",
+                                    ),
+                                  ),
+                                );
+                              },
+                              child: const Text('Open with DeepL'),
+                            ),
+                            // Weblioで開く
+                            PopupMenuItem(
+                              onTap: () {
+                                Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                    builder: (context) => WebViewPage(
+                                      url:
+                                          "https://ejje.weblio.jp/content/${record.value}",
+                                    ),
+                                  ),
+                                );
+                              },
+                              child: const Text('Open with Weblio'),
+                            ),
+                            // 編集
+                            PopupMenuItem(
+                              onTap: () {},
+                              child: const Text('Edit'),
+                            ),
+                            // 発音
+                            PopupMenuItem(
+                              onTap: () {
+                                tts.speak(record.value);
+                              },
+                              child: const Text('Pronounce'),
+                            ),
+
+                            // Add more menu items as needed
+                          ],
+                        );
+                        // Navigator.push(
+                        //   context,
+                        //   MaterialPageRoute(
+                        //     builder: (context) => WebViewPage(
+                        //       keyWord: record.value,
+                        //     ),
+                        //   ),
+                        // );
                       },
                       child: Card(
                         color: Colors.white,
@@ -95,7 +170,10 @@ class WordsPageState extends ConsumerState<WordsPage> {
                                 onTap: () {
                                   tts.speak(record.value);
                                 },
-                                child: const Icon(Icons.volume_up),
+                                child: const Icon(
+                                  Icons.volume_up,
+                                  size: 40,
+                                ),
                               ),
                             ),
                           ],
