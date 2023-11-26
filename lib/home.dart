@@ -13,12 +13,24 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(
-        children: [
-          Expanded(
-            child: WordsPage(),
-          )
-        ],
+      appBar: AppBar(
+        title: const Text(
+          "Words & Sentences",
+          style: TextStyle(
+            fontWeight: FontWeight.w800,
+          ),
+        ),
+        backgroundColor: Colors.black26,
+      ),
+      endDrawer: const Drawer(),
+      body: SafeArea(
+        child: Column(
+          children: [
+            Expanded(
+              child: WordsPage(),
+            ),
+          ],
+        ),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
@@ -34,7 +46,11 @@ class _HomeState extends State<Home> {
             setState(() {});
           }
         },
-        child: const Icon(Icons.add),
+        backgroundColor: Colors.grey,
+        child: const Icon(
+          Icons.add,
+          color: Colors.black,
+        ),
       ),
     );
   }
