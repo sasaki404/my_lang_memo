@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:translator/translator.dart';
 import 'package:my_lang_memo/camera_view.dart';
 import 'package:my_lang_memo/model/word.dart';
 import 'package:my_lang_memo/provider/word_records.dart';
@@ -16,6 +17,7 @@ class WordRegistDialogState extends ConsumerState<WordRegistDialog> {
   final meaningController = TextEditingController();
   bool? isFinished = false;
   int? type = 0;
+  final translator = GoogleTranslator();
 
   @override
   Widget build(BuildContext context) {
@@ -56,8 +58,20 @@ class WordRegistDialogState extends ConsumerState<WordRegistDialog> {
             ),
             TextFormField(
               controller: meaningController,
-              decoration: const InputDecoration(
-                  labelText: "meaning", border: OutlineInputBorder()),
+              decoration: InputDecoration(
+                labelText: "meaning",
+                border: const OutlineInputBorder(),
+                suffixIcon: GestureDetector(
+                  onTap: () async {
+                    final translation = await translator
+                        .translate(valueController.text, to: 'ja');
+                    meaningController.text = translation.text;
+                  },
+                  child: const Icon(
+                    Icons.translate_sharp,
+                  ),
+                ),
+              ),
             ),
             DropdownButton(
               items: const [
@@ -128,6 +142,11 @@ class WordRegistDialogState extends ConsumerState<WordRegistDialog> {
                     );
                   });
             } else {
+              if (meaningController.text.isEmpty) {
+                final translation =
+                    await translator.translate(valueController.text, to: 'ja');
+                meaningController.text = translation.text;
+              }
               await ref.watch(wordRecordsNotifierProvider.notifier).insert(Word(
                     value: valueController.text,
                     meaning: meaningController.text,
