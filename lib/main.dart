@@ -4,9 +4,14 @@ import 'package:my_lang_memo/home.dart';
 
 void main() {
   const home = Home();
-  const app = MaterialApp(
+  final app = MaterialApp(
     home: home,
     debugShowCheckedModeBanner: false,
+    theme: ThemeData(
+      fontFamily: 'Murecho',
+      brightness: Brightness.dark,
+      visualDensity: VisualDensity.adaptivePlatformDensity,
+    ),
   );
-  runApp(const ProviderScope(child: app));
+  runApp(ProviderScope(child: app));
 }
