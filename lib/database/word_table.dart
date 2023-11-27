@@ -35,6 +35,21 @@ class WordTable {
     ]);
   }
 
+  Future<void> update(Word word) async {
+    final db = await DatabaseManager().database;
+    final sql = '''
+        UPDATE $tableName set value = ?, meaning = ?, type = ?, is_finished = ?, updated_at = ? WHERE id = ?
+    ''';
+    await db.rawQuery(sql, [
+      word.value,
+      word.meaning ?? "",
+      word.type,
+      word.isFinished,
+      DateTime.now().millisecondsSinceEpoch,
+      word.id
+    ]);
+  }
+
   Future<List<Word>> selectAll() async {
     final db = await DatabaseManager().database;
     final sql = '''
@@ -42,5 +57,13 @@ class WordTable {
     ''';
     final res = await db.rawQuery(sql);
     return res.map((e) => Word.fromSqfliteDatabase(e)).toList();
+  }
+
+  Future<void> delete(int id) async {
+    final db = await DatabaseManager().database;
+    final sql = '''
+      DELETE FROM $tableName WHERE id = ?
+    ''';
+    await db.rawDelete(sql, [id]);
   }
 }
