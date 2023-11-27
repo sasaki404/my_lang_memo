@@ -7,7 +7,7 @@ class Word {
   final String? createdAt;
   final String? updatedAt;
 
-  Word({
+  const Word({
     this.id,
     required this.value,
     this.meaning,
