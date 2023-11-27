@@ -6,6 +6,7 @@ import 'package:my_lang_memo/database/word_table.dart';
 import 'package:my_lang_memo/model/word.dart';
 import 'package:my_lang_memo/provider/word_records.dart';
 import 'package:my_lang_memo/web_view_page.dart';
+import 'package:my_lang_memo/word_regist_dialog.dart';
 
 class WordsPage extends ConsumerStatefulWidget {
   WordsPage({super.key});
@@ -29,7 +30,7 @@ class WordsPageState extends ConsumerState<WordsPage> {
 
   @override
   Widget build(BuildContext context) {
-    // レコードが登録されたときの状態更新処理
+    // レコードが登録・更新されたときの状態更新処理
     ref.listen(wordRecordsNotifierProvider, ((previous, next) {
       next.whenData((value) {
         setState(() {
@@ -39,7 +40,7 @@ class WordsPageState extends ConsumerState<WordsPage> {
     }));
 
     tts.setLanguage('en-US');
-    tts.setSpeechRate(0.5);
+    tts.setSpeechRate(0.35);
 
     return FutureBuilder(
         future: wordRecords,
@@ -117,12 +118,19 @@ class WordsPageState extends ConsumerState<WordsPage> {
                             ),
                             // 編集
                             PopupMenuItem(
-                              onTap: () {},
+                              onTap: () async {
+                                await showDialog(
+                                  context: context,
+                                  builder: (_) {
+                                    return WordRegistDialog(wordRecord: record);
+                                  },
+                                );
+                              },
                               child: const Text('Edit'),
                             ),
                             // 発音
                             PopupMenuItem(
-                              onTap: () {
+                              onTap: () async {
                                 tts.speak(record.value);
                               },
                               child: const Text('Pronounce'),
@@ -131,14 +139,6 @@ class WordsPageState extends ConsumerState<WordsPage> {
                             // Add more menu items as needed
                           ],
                         );
-                        // Navigator.push(
-                        //   context,
-                        //   MaterialPageRoute(
-                        //     builder: (context) => WebViewPage(
-                        //       keyWord: record.value,
-                        //     ),
-                        //   ),
-                        // );
                       },
                       child: Card(
                         color: Colors.white,
