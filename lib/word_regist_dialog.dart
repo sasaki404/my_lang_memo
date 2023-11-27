@@ -6,7 +6,8 @@ import 'package:my_lang_memo/model/word.dart';
 import 'package:my_lang_memo/provider/word_records.dart';
 
 class WordRegistDialog extends ConsumerStatefulWidget {
-  const WordRegistDialog({super.key});
+  final Word wordRecord;
+  const WordRegistDialog({super.key, this.wordRecord = const Word(value: "")});
 
   @override
   WordRegistDialogState createState() => WordRegistDialogState();
@@ -17,7 +18,25 @@ class WordRegistDialogState extends ConsumerState<WordRegistDialog> {
   final meaningController = TextEditingController();
   bool? isFinished = false;
   int? type = 0;
+  bool isEdit = false;
+  late Word wordRecord;
+  late final NavigatorState navigator;
   final translator = GoogleTranslator();
+
+  @override
+  void initState() {
+    super.initState();
+    navigator = Navigator.of(context);
+    wordRecord = widget.wordRecord;
+    if (wordRecord.value.isNotEmpty) {
+      isEdit = true;
+      wordRecord = widget.wordRecord;
+      valueController.text = wordRecord.value;
+      meaningController.text = wordRecord.meaning ?? "";
+      isFinished = wordRecord.isFinished;
+      type = wordRecord.type;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -42,7 +61,8 @@ class WordRegistDialogState extends ConsumerState<WordRegistDialog> {
                       }),
                     ).then(
                       (value) {
-                        valueController.text = value;
+                        // 改行文字を削除する
+                        valueController.text = value.trimRight();
                       },
                     );
                   },
@@ -97,6 +117,27 @@ class WordRegistDialogState extends ConsumerState<WordRegistDialog> {
                 );
               },
             ),
+            (isEdit)
+                ? ElevatedButton(
+                    onPressed: () async {
+                      await ref
+                          .watch(wordRecordsNotifierProvider.notifier)
+                          .delete(wordRecord.id!);
+                      navigator.pop();
+                    },
+                    style: const ButtonStyle(
+                      backgroundColor: MaterialStatePropertyAll(
+                        Colors.black45,
+                      ),
+                    ),
+                    child: const Text(
+                      "Delete",
+                      style: TextStyle(
+                        color: Colors.red,
+                      ),
+                    ),
+                  )
+                : const SizedBox(),
           ],
         ),
       ),
@@ -142,17 +183,37 @@ class WordRegistDialogState extends ConsumerState<WordRegistDialog> {
                     );
                   });
             } else {
+              FloatingActionButton(
+                child: const CircularProgressIndicator(),
+                onPressed: () {},
+              );
               if (meaningController.text.isEmpty) {
                 final translation =
                     await translator.translate(valueController.text, to: 'ja');
                 meaningController.text = translation.text;
               }
-              await ref.watch(wordRecordsNotifierProvider.notifier).insert(Word(
-                    value: valueController.text,
-                    meaning: meaningController.text,
-                    isFinished: isFinished,
-                    type: type,
-                  ));
+              if (!isEdit) {
+                await ref.watch(wordRecordsNotifierProvider.notifier).insert(
+                      Word(
+                        value: valueController.text,
+                        meaning: meaningController.text,
+                        isFinished: isFinished,
+                        type: type,
+                      ),
+                    );
+              } else {
+                await ref
+                    .watch(wordRecordsNotifierProvider.notifier)
+                    .updateState(
+                      Word(
+                        id: wordRecord.id,
+                        value: valueController.text,
+                        meaning: meaningController.text,
+                        isFinished: isFinished,
+                        type: type,
+                      ),
+                    );
+              }
               if (context.mounted) Navigator.pop(context, true);
             }
           },
