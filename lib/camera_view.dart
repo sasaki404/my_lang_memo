@@ -16,7 +16,7 @@ class _CameraViewState extends State<CameraView> with WidgetsBindingObserver {
   bool _isPermissionGranted = false;
   late final Future<void> _future;
   CameraController? _cameraController;
-  final textRecognizer = TextRecognizer(script: TextRecognitionScript.japanese);
+  final textRecognizer = TextRecognizer();
 
   @override
   void initState() {
