@@ -6,7 +6,11 @@ import 'package:google_mlkit_text_recognition/google_mlkit_text_recognition.dart
 import 'package:permission_handler/permission_handler.dart';
 
 class CameraView extends StatefulWidget {
-  const CameraView({super.key});
+  final bool isJapanese;
+  const CameraView({
+    super.key,
+    required this.isJapanese,
+  });
 
   @override
   State<CameraView> createState() => _CameraViewState();
@@ -16,13 +20,18 @@ class _CameraViewState extends State<CameraView> with WidgetsBindingObserver {
   bool _isPermissionGranted = false;
   late final Future<void> _future;
   CameraController? _cameraController;
-  final textRecognizer = TextRecognizer();
+  late final TextRecognizer textRecognizer;
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
     _future = _requestCameraPermission();
+    if (widget.isJapanese) {
+      textRecognizer = TextRecognizer(script: TextRecognitionScript.japanese);
+    } else {
+      textRecognizer = TextRecognizer();
+    }
   }
 
   @override
