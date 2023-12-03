@@ -64,8 +64,6 @@ flutter {
     source '../..'
 }
 
-dependencies {}
-
 dependencies {
     // Add language package you need to use
     implementation 'com.google.mlkit:text-recognition-japanese:16.0.0-beta6'
