@@ -53,7 +53,7 @@ class WordTable {
   Future<List<Word>> selectAll() async {
     final db = await DatabaseManager().database;
     final sql = '''
-        SELECT * from $tableName
+        SELECT * from $tableName order by created_at desc
     ''';
     final res = await db.rawQuery(sql);
     return res.map((e) => Word.fromSqfliteDatabase(e)).toList();
