@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:my_lang_memo/settings/settings_page.dart';
 import 'package:my_lang_memo/word_regist_dialog.dart';
 import 'package:my_lang_memo/words_page.dart';
 
@@ -22,7 +23,50 @@ class _HomeState extends State<Home> {
         ),
         backgroundColor: Colors.black26,
       ),
-      endDrawer: const Drawer(),
+      endDrawer: Drawer(
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: [
+            const DrawerHeader(
+              decoration: BoxDecoration(
+                color: Colors.blueGrey,
+              ),
+              child: Text(
+                'Menu',
+                style: TextStyle(fontWeight: FontWeight.w900),
+              ),
+            ),
+            ListTile(
+              leading: const Icon(Icons.draw),
+              title: const Text("Training",
+                  style: TextStyle(fontWeight: FontWeight.w700)),
+              trailing: const Icon(Icons.arrow_right),
+              onTap: () {},
+            ),
+            const Divider(),
+            ListTile(
+              leading: const Icon(Icons.playlist_add),
+              title: const Text("Playlist",
+                  style: TextStyle(fontWeight: FontWeight.w700)),
+              trailing: const Icon(Icons.arrow_right),
+              onTap: () {},
+            ),
+            const Divider(),
+            ListTile(
+              leading: const Icon(Icons.settings),
+              title: const Text("Settings",
+                  style: TextStyle(fontWeight: FontWeight.w700)),
+              trailing: const Icon(Icons.arrow_right),
+              onTap: () {
+                Navigator.push(context, MaterialPageRoute(builder: (_) {
+                  return const SettingsPage();
+                }));
+              },
+            ),
+            const Divider(),
+          ],
+        ),
+      ),
       body: SafeArea(
         child: Column(
           children: [
@@ -34,17 +78,12 @@ class _HomeState extends State<Home> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
-          final result = await showDialog(
+          await showDialog(
             context: context,
             builder: (_) {
               return WordRegistDialog();
             },
           );
-          // Check if the result is true, meaning a new record was added
-          if (result == true) {
-            // Refresh the WordsPage by calling setState
-            setState(() {});
-          }
         },
         backgroundColor: Colors.grey,
         child: const Icon(
