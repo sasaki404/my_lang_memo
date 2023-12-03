@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:my_lang_memo/database/word_table.dart';
 import 'package:my_lang_memo/model/word.dart';
+import 'package:my_lang_memo/provider/audio_speed.dart';
 import 'package:my_lang_memo/provider/word_records.dart';
 import 'package:my_lang_memo/web_view_page.dart';
 import 'package:my_lang_memo/word_regist_dialog.dart';
@@ -40,7 +41,15 @@ class WordsPageState extends ConsumerState<WordsPage> {
     }));
 
     tts.setLanguage('en-US');
-    tts.setSpeechRate(0.35);
+    // 設定から再生速度を取得
+    ref
+        .watch(audioSpeedNotifierProvider)
+        .whenData((value) => tts.setSpeechRate(value));
+    ref.listen(audioSpeedNotifierProvider, ((previous, next) {
+      next.whenData((value) {
+        tts.setSpeechRate(value);
+      });
+    }));
 
     return FutureBuilder(
         future: wordRecords,
@@ -130,7 +139,7 @@ class WordsPageState extends ConsumerState<WordsPage> {
                             ),
                             // 発音
                             PopupMenuItem(
-                              onTap: () async {
+                              onTap: () {
                                 tts.speak(record.value);
                               },
                               child: const Text('Pronounce'),
