@@ -62,7 +62,17 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
             onPressed: () {
               ref
                   .read(audioSpeedNotifierProvider.notifier)
-                  .updateState(_audioSpeed);
+                  .updateState(_audioSpeed)
+                  .then(
+                (value) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Saved settings.'),
+                      duration: Duration(milliseconds: 1000),
+                    ),
+                  );
+                },
+              );
             },
             child: const Text(
               "Save",
