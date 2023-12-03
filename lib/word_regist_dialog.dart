@@ -55,10 +55,13 @@ class WordRegistDialogState extends ConsumerState<WordRegistDialog> {
                 suffixIcon: GestureDetector(
                   onTap: () {
                     Navigator.of(context).push(
-                      MaterialPageRoute(builder: (context) {
-                        //遷移先の画面としてリスト追加画面を指定
-                        return const CameraView();
-                      }),
+                      MaterialPageRoute(
+                        builder: (context) {
+                          return const CameraView(
+                            isJapanese: false,
+                          );
+                        },
+                      ),
                     ).then(
                       (value) {
                         if (value != null && value is String) {
@@ -83,17 +86,52 @@ class WordRegistDialogState extends ConsumerState<WordRegistDialog> {
               decoration: InputDecoration(
                 labelText: "meaning",
                 border: const OutlineInputBorder(),
-                suffixIcon: GestureDetector(
-                  onTap: () async {
-                    final translation = await translator
-                        .translate(valueController.text, to: 'ja');
-                    meaningController.text = translation.text;
-                  },
-                  child: const Icon(
-                    Icons.translate_sharp,
-                  ),
+                suffixIcon: Column(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    GestureDetector(
+                      onTap: () async {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) {
+                              return const CameraView(
+                                isJapanese: true,
+                              );
+                            },
+                          ),
+                        ).then(
+                          (value) {
+                            if (value != null && value is String) {
+                              // 改行文字を削除する
+                              valueController.text = value.trimRight();
+                            }
+                          },
+                        );
+                      },
+                      child: const Icon(
+                        Icons.camera_alt,
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 5,
+                    ),
+                    GestureDetector(
+                      onTap: () async {
+                        if (valueController.text.isEmpty) {
+                          return;
+                        }
+                        final translation = await translator
+                            .translate(valueController.text, to: 'ja');
+                        meaningController.text = translation.text;
+                      },
+                      child: const Icon(
+                        Icons.translate_sharp,
+                      ),
+                    ),
+                  ],
                 ),
               ),
+              maxLines: 2,
             ),
             DropdownButton(
               items: const [
