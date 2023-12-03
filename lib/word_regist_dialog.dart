@@ -61,8 +61,10 @@ class WordRegistDialogState extends ConsumerState<WordRegistDialog> {
                       }),
                     ).then(
                       (value) {
-                        // 改行文字を削除する
-                        valueController.text = value.trimRight();
+                        if (value != null && value is String) {
+                          // 改行文字を削除する
+                          valueController.text = value.trimRight();
+                        }
                       },
                     );
                   },
