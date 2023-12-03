@@ -80,20 +80,6 @@ class _CameraViewState extends State<CameraView> with WidgetsBindingObserver {
                             spacing: 20,
                             children: [
                               ElevatedButton(
-                                onPressed: _scanImage,
-                                style: const ButtonStyle(
-                                  backgroundColor:
-                                      MaterialStatePropertyAll(Colors.black12),
-                                ),
-                                child: const Text(
-                                  'Scan',
-                                  style: TextStyle(
-                                    color: Colors.white54,
-                                    fontWeight: FontWeight.w900,
-                                  ),
-                                ),
-                              ),
-                              ElevatedButton(
                                 onPressed: () {
                                   Navigator.pop(context);
                                 },
@@ -106,6 +92,20 @@ class _CameraViewState extends State<CameraView> with WidgetsBindingObserver {
                                   style: TextStyle(
                                       color: Colors.white38,
                                       fontWeight: FontWeight.w900),
+                                ),
+                              ),
+                              ElevatedButton(
+                                onPressed: _scanImage,
+                                style: const ButtonStyle(
+                                  backgroundColor:
+                                      MaterialStatePropertyAll(Colors.black12),
+                                ),
+                                child: const Text(
+                                  'Scan',
+                                  style: TextStyle(
+                                    color: Colors.white54,
+                                    fontWeight: FontWeight.w900,
+                                  ),
                                 ),
                               ),
                             ],
