@@ -67,4 +67,5 @@ flutter {
 dependencies {
     // Add language package you need to use
     implementation 'com.google.mlkit:text-recognition-japanese:16.0.0-beta6'
+    implementation 'com.google.mlkit:playstore-dynamic-feature-support:16.0.0-beta2'
 }

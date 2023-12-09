@@ -27,7 +27,8 @@ class _CameraViewState extends State<CameraView> with WidgetsBindingObserver {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
     _future = _requestCameraPermission();
-    if (widget.isJapanese) {
+    if (widget.isJapanese && Platform.isIOS) {
+      // Androidではissue解決まで使えない。https://github.com/flutter-ml/google_ml_kit_flutter/issues/549、https://github.com/flutter-ml/google_ml_kit_flutter/issues/519
       textRecognizer = TextRecognizer(script: TextRecognitionScript.japanese);
     } else {
       textRecognizer = TextRecognizer();
