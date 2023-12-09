@@ -8,6 +8,7 @@ import 'package:my_lang_memo/provider/audio_speed.dart';
 import 'package:my_lang_memo/provider/word_records.dart';
 import 'package:my_lang_memo/web_view_page.dart';
 import 'package:my_lang_memo/word_regist_dialog.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class WordsPage extends ConsumerStatefulWidget {
   WordsPage({super.key});
@@ -144,7 +145,16 @@ class WordsPageState extends ConsumerState<WordsPage> {
                               },
                               child: const Text('Pronounce'),
                             ),
-
+                            // ChatGPT
+                            PopupMenuItem(
+                              onTap: () async {
+                                if (!await launchUrl(
+                                    Uri.parse("https://chat.openai.com/"))) {
+                                  throw Exception('Could not launch');
+                                }
+                              },
+                              child: const Text('ChatGPT'),
+                            ),
                             // Add more menu items as needed
                           ],
                         );
