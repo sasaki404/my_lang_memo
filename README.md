@@ -1,16 +1,8 @@
-# my_lang_memo
+# 英語学習支援アプリ
 
-"A new Flutter project."
+## OCR
 
-## Getting Started
 
-This project is a starting point for a Flutter application.
+https://github.com/sasaki404/my_lang_memo/assets/62131201/b095f91f-8d2f-45ff-9b4e-f8d5617129fe
 
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+![スクリーンショット 2023-12-09 1 04 14](https://github.com/sasaki404/my_lang_memo/assets/62131201/ab40c862-f747-4c7e-8789-0c838deb333f)
